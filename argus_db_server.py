@@ -24,12 +24,12 @@ def new_session():
 	except:
 		return "0"
 
-@app.route('/log/position/<string:id>/<string:xpos>/<string:ypos>/<string:zpos>', methods=['GET'])
-def log_pos(id, xpos, ypos, zpos):
+@app.route('/log/position/<string:id>/<string:status>/<string:xpos>/<string:ypos>/<string:zpos>', methods=['GET'])
+def log_pos(id, status, xpos, ypos, zpos):
 	try:
 		now = datetime.datetime.now()
 		time = now.isoformat()
-		cursor.execute("INSERT INTO positions(session_key, id, xpos, ypos, zpos, log_datetime) Values (last_insert_id(), '" + id + "', " + xpos + ", " + ypos + ", " + zpos + ", '" + time + "')")
+		cursor.execute("INSERT INTO positions(session_key, id, status, xpos, ypos, zpos, log_datetime) Values (last_insert_id(), '" + id + "', " + status + ", " + xpos + ", " + ypos + ", " + zpos + ", '" + time + "')")
 		db.commit()
 		return "1"
 	except:
