@@ -10,6 +10,7 @@ db = MySQLdb.connect(host="localhost",  # your host
                      user="root",       # username
                      passwd="Banshee8396",     # password
                      db="argus")   # name of the database
+#MySQLdb.cursors.DictCursor
 cursor = db.cursor()
 
 @app.route('/create/session', methods=['GET'])
@@ -31,6 +32,21 @@ def log_pos(id, xpos, ypos, zpos):
 		cursor.execute("INSERT INTO positions(session_key, id, xpos, ypos, zpos, log_datetime) Values (last_insert_id(), '" + id + "', " + xpos + ", " + ypos + ", " + zpos + ", '" + time + "')")
 		db.commit()
 		return "1"
+	except:
+		return "0"
+
+@app.route('/retrieve/positions/<string:session_key>', methods=['GET'])
+def get_pos(session_key):
+	try:
+		cursor.execute("SELECT * FROM positions WHERE session_key = " + session_key + " ORDER BY log_datetime ASC")
+		result = cursor.fetchall()
+		s = ""
+		for row in result:
+			s += str(row[0]) + "," + str(row[1]) + "," + str(row[3]) + "," + str(row[5]) + "<br/>"
+		if(len(s) > 0):
+			return s
+		else:
+			return "0";
 	except:
 		return "0"
 
