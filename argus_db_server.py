@@ -44,11 +44,11 @@ def log_pos(id, tick, status, xpos, ypos, zpos):
 def get_pos(session_key, t_id):
 	try:
 		cursor = db.cursor()
-		cursor.execute("SELECT tick, xpos, zpos FROM positions WHERE session_key = " + session_key + " AND id = '" + t_id + "' ORDER BY log_datetime ASC")
+		cursor.execute("SELECT tick, xpos, zpos, status FROM positions WHERE session_key = " + session_key + " AND id = '" + t_id + "' ORDER BY log_datetime ASC")
 		result = cursor.fetchall()
 		s = ""
 		for row in result:
-			s += str(row[0]) + "," + str(row[1]) + "," + str(row[2]) + "<br>"
+			s += str(row[0]) + "," + str(row[1]) + "," + str(row[2]) + "," + str(row[3]) + "<br>"
 		if(len(s) > 0):
 			cursor.close()
 			s = s[0:len(s) - 4] # Remove last '<br>' from string 
@@ -60,8 +60,8 @@ def get_pos(session_key, t_id):
 		return "0"
 
 # Returns the total length of time that a session ran for
-@app.route('/retrieve/length/<string:session_key>', methods=['GET'])
-def get_len(session_key):
+@app.route('/retrieve/length/time/<string:session_key>', methods=['GET'])
+def get_len_time(session_key):
 	try:
 		cursor = db.cursor()
 		cursor.execute("SELECT log_datetime FROM positions WHERE session_key = " + session_key + " ORDER BY log_datetime ASC LIMIT 1")
@@ -71,6 +71,17 @@ def get_len(session_key):
 		len = str(dateEnd - dateBegin)
 		cursor.close()
 		return len
+	except:
+		return "0"
+
+# Returns the total amount of ticks for a specific session
+@app.route('/retrieve/length/tick/<string:session_key>', methods=['GET'])
+def get_len_tick(session_key):
+	try:
+		cursor = db.cursor()
+		cursor.execute("SELECT tick FROM positions WHERE session_key = " + session_key + " ORDER BY tick DESC LIMIT 1")
+		result = cursor.fetchone()[0]
+		return str(result)
 	except:
 		return "0"
 
